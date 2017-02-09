@@ -23,7 +23,6 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
-import com.google.common.util.concurrent.UncheckedTimeoutException;
 import org.obiba.mica.core.domain.LocalizedString;
 import org.obiba.mica.micaConfig.service.TaxonomyService;
 import org.obiba.mica.search.queries.AbstractDocumentQuery;
@@ -54,6 +53,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.UncheckedTimeoutException;
 
 import static org.obiba.mica.search.queries.AbstractDocumentQuery.Scope.DETAIL;
 import static org.obiba.mica.search.queries.AbstractDocumentQuery.Scope.DIGEST;
@@ -189,7 +189,7 @@ public class JoinQueryExecutor {
         .filter(AbstractDocumentQuery::hasQueryBuilder).findFirst().isPresent();
 
     if(queriesHaveFilters) {
-      DatasetIdProvider datasetIdProvider = new DatasetIdProvider();
+      DocumentQueryIdProvider datasetIdProvider = new DocumentQueryIdProvider();
       variableQuery.setDatasetIdProvider(datasetIdProvider);
       datasetQuery.setDatasetIdProvider(datasetIdProvider);
 
@@ -197,16 +197,7 @@ public class JoinQueryExecutor {
       CountStatsData countStats = countBuilder != null ? getCountStatsData(type) : null;
 
       if(joinedIds != null && joinedIds.size() > 0) {
-        if (type == QueryType.DATASET) {
-          // clear previously set datasetIds by resetting shared datasetIdProvider's datasetIds list
-          datasetIdProvider.resetDatasetIds();
-          queryAggregations(joinedIds, datasetQuery, variableQuery);
-        }
-        getDocumentQuery(type).query(joinedIds, countStats, scope);
-        // need to update dataset and variable and redo agg query
-        if(type == QueryType.VARIABLE) {
-          datasetQuery.query(joinedIds, null, DIGEST);
-        }
+       getDocumentQuery(type).query(joinedIds, countStats, scope);
       }
     } else {
       execute(type, scope, countBuilder);
