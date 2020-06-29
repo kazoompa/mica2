@@ -74,6 +74,14 @@
         </td>
       </tr>
       <tr>
+        <pre>{{getSubset(model.subset)}}</pre>
+
+        <th translate>taxonomy-config.criterion-dialog.subset</th>
+        <td translate>
+          {{'global.'+getSubset(model.content) | translate}}
+        </td>
+      </tr>
+      <tr>
         <th translate>global.field</th>
         <td>
           {{getField(model.content)}}

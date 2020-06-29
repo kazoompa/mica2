@@ -137,10 +137,16 @@ public class TaxonomyConfigService {
         if(Strings.isNullOrEmpty(alias)) alias = AggregationHelper.formatName(field);
 
         String range = v.getAttributeValue("range");
-        boolean isRange = Strings.isNullOrEmpty(range) ? false : "true".equals(range);
+        boolean isRange = !Strings.isNullOrEmpty(range) && "true".equals(range);
+        boolean isSubset = Boolean.parseBoolean(v.getAttributeValue("subset"));
 
-        if(aliases.containsKey(alias)) throw new VocabularyDuplicateAliasException(v);
-        aliases.put(alias, true);
+        if(aliases.containsKey(alias)) {
+          if (!isSubset) {
+            throw new VocabularyDuplicateAliasException(v);
+          }
+        } else {
+          aliases.put(alias, true);
+        }
 
         if("integer".equals(type) || "decimal".equals(type)) {
           if(v.hasTerms() != isRange) {

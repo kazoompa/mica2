@@ -1904,7 +1904,7 @@
     "facetPosition": "0"
     "facetExpanded": "false"
     "type": "keyword"
-    "repeatable": "true"
+  "repeatable": "true"
   "terms":
   - "name": "general_population"
     "title":

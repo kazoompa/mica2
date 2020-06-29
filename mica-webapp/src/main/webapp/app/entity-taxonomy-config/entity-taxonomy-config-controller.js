@@ -172,6 +172,7 @@ mica.entitySfConfig
       $scope.getTermsSortKeyMap = VocabularyAttributeService.getTermsSortKeyMap;
       $scope.getHidden = VocabularyAttributeService.getHidden;
       $scope.getLocalized = VocabularyAttributeService.getLocalized;
+      $scope.getSubset = VocabularyAttributeService.getSubset;
       $scope.getFacet = VocabularyAttributeService.getFacet;
       $scope.getFacetPosition = VocabularyAttributeService.getFacetPosition;
       $scope.getFacetExpanded = VocabularyAttributeService.getFacetExpanded;
@@ -381,6 +382,14 @@ mica.entitySfConfig
           };
 
           $scope.model.onRangeChange = function() {
+            if (!EntityTaxonomySchemaFormService.validateModel($scope.sfForm, $scope.model)) {
+              $scope.$broadcast('schemaForm.error.field', 'duplicate-criterion-alias', false);
+            } else {
+              $scope.$broadcast('schemaForm.error.field', 'duplicate-criterion-alias', true);
+            }
+          };
+
+          $scope.model.onSubsetChange = function() {
             if (!EntityTaxonomySchemaFormService.validateModel($scope.sfForm, $scope.model)) {
               $scope.$broadcast('schemaForm.error.field', 'duplicate-criterion-alias', false);
             } else {

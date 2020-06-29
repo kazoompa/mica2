@@ -1859,6 +1859,8 @@
       "unique-name": "Le nom du critère doit être unique.",
       "hidden": "Caché",
       "hidden-help": "Un critère caché est exclu de la recherche.",
+      "subset": "Sous-ensemble",
+      "subset-help": "Un critère qui correspond toujours à un sous-ensemble de valeurs.",
       "term-sort-key-help": "L'ordre dans lequel les termes du critère sont affichés.",
       "terms-sort-key": "L'ordre d'affichage des termes",
       "range-aggregation": "A des intervalles de portées",

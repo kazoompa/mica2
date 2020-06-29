@@ -199,10 +199,23 @@ mica.entityTaxonomyConfig
         return getBoolAttribute(content, 'static');
       };
 
+      this.setSubset = function(attributes, localized) {
+        setAttribute(attributes, 'subset', localized+'');
+      };
+
+      this.getSubset = function(content) {
+        return getBoolAttribute(content, 'subset');
+      };
+
       this.getAliases = function(vocabularies, excludeVocabulary) {
+        var targetField = excludeVocabulary ?
+          getAttribute(excludeVocabulary.attributes, 'field', excludeVocabulary.name) :
+          null;
+
         var aliasList = [];
         (vocabularies || []).filter(function (vocabulary) {
-          return vocabulary !== excludeVocabulary;
+          var field = getAttribute(vocabulary.attributes, 'field', vocabulary.name);
+          return excludeVocabulary !== vocabulary && targetField !== field;
         }).forEach(function(vocabulary) {
           var alias = getAttribute(vocabulary.attributes, 'alias', null);
           if (alias && vocabulary) {
@@ -386,7 +399,7 @@ mica.entityTaxonomyConfig
         return data;
       }
 
-      function getVocabularyFormData(content, siblings, onRangeChange) {
+      function getVocabularyFormData(content, siblings, onRangeChange, onSubsetChange) {
         var isStatic = VocabularyAttributeService.isStatic(content);
 
         var data = {
@@ -446,6 +459,7 @@ mica.entityTaxonomyConfig
                   'null',
                   'string'
                 ],
+
                 'readonly': isStatic,
               },
               'rangeAggregation': {
@@ -464,6 +478,10 @@ mica.entityTaxonomyConfig
               },
               'facetExpanded': {
                 'title': $filter('translate')('taxonomy-config.criterion-dialog.facet-expanded'),
+                'type': 'boolean'
+              },
+              'subset': {
+                'title': $filter('translate')('taxonomy-config.criterion-dialog.subset'),
                 'type': 'boolean'
               }
             }
@@ -499,6 +517,11 @@ mica.entityTaxonomyConfig
                       'description': '<p class="help-block">' + $filter('translate')('taxonomy-config.criterion-dialog.repeatable-help') + '</p>'
                     },
                     'localized',
+                    {
+                      'key': 'subset',
+                      'description': '<p class="help-block">' + $filter('translate')('taxonomy-config.criterion-dialog.subset-help') + '</p>',
+                      'onChange': onSubsetChange
+                    },
                     {
                       'key': 'field',
                       'type': 'typeahead',
@@ -570,6 +593,7 @@ mica.entityTaxonomyConfig
           data.model.repeatable = content.repeatable;
           data.model.hidden = VocabularyAttributeService.getHidden(content);
           data.model.localized = VocabularyAttributeService.getLocalized(content);
+          data.model.subset = VocabularyAttributeService.getSubset(content);
           data.model.facet = VocabularyAttributeService.getFacet(content);
           data.model.facetPosition = VocabularyAttributeService.getFacetPosition(content);
           data.model.facetExpanded = VocabularyAttributeService.getFacetExpanded(content);
@@ -702,7 +726,7 @@ mica.entityTaxonomyConfig
       this.validateModel = function(data, model) {
         if ('criterion' === model.type) {
           var alias = VocabularyAttributeService.generateAlias(data.model.field, data.model.rangeAggregation);
-          return (model.aliases || []).indexOf(alias) === -1;
+          return (model.aliases || []).indexOf(alias) === -1 || data.model.subset;
         }
 
         return true;
@@ -729,6 +753,10 @@ mica.entityTaxonomyConfig
 
             if (data.model.hasOwnProperty('localized')) {
               VocabularyAttributeService.setLocalized(model.content.attributes, data.model.localized);
+            }
+
+            if (data.model.hasOwnProperty('subset')) {
+              VocabularyAttributeService.setSubset(model.content.attributes, data.model.subset);
             }
 
             if (data.model.hasOwnProperty('facet')) {
@@ -783,7 +811,7 @@ mica.entityTaxonomyConfig
           case 'taxonomy':
             return getTaxonomyFormData(model.content);
           case 'criterion':
-            return getVocabularyFormData(model.content, model.siblings, model.onRangeChange);
+            return getVocabularyFormData(model.content, model.siblings, model.onRangeChange, model.onSubsetChange);
           case 'term':
             return getTermFormData(model.content, model.valueType || 'string', model.siblings, model.vocabulary);
         }

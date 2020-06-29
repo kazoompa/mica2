@@ -1859,6 +1859,8 @@
       "unique-name": "Criterion name must be unique.",
       "hidden": "Hidden",
       "hidden-help": "A hidden criterion is excluded from search.",
+      "subset": "Subset",
+      "subset-help": "A criterion that always matches a subset of values.",
       "term-sort-key-help": "The order by which terms of the citerion are listed.",
       "terms-sort-key": "Terms Listing Order",
       "range-aggregation": "Has Range Intervals",

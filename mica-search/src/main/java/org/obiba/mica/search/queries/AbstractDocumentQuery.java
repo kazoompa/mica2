@@ -173,12 +173,13 @@ public abstract class AbstractDocumentQuery implements DocumentQueryInterface {
     if (mode != QueryMode.LIST && filter != null && !filter.isEmpty()) {
       List<Pattern> patterns = filter.stream().map(Pattern::compile).collect(Collectors.toList());
       taxonomy.getVocabularies().forEach(vocabulary -> {
+        boolean isSubset = Boolean.parseBoolean(vocabulary.getAttributeValue("subset"));
         String field = vocabulary.getAttributes().containsKey("field")
             ? vocabulary.getAttributeValue("field")
             : vocabulary.getName().replace('-', '.');
 
         if (patterns.isEmpty() || patterns.stream().anyMatch(p -> p.matcher(field).matches())) {
-          boolean multipleTypes = null != properties.get(field);
+          boolean multipleTypes = !isSubset && null != properties.get(field);
           properties.put(field, "");
           String type = vocabulary.getAttributeValue("type");
           if ("integer".equals(type) || "decimal".equals(type)) {
@@ -204,7 +205,7 @@ public abstract class AbstractDocumentQuery implements DocumentQueryInterface {
     if (multipleTypes) {
       String currentTypes = properties.get(property).toString();
       properties.put(property, currentTypes + "," + value);
-    } else {
+    } else if (!properties.contains(property)) {
       properties.put(property, value);
     }
   }
