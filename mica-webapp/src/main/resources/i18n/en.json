@@ -1866,7 +1866,7 @@
       "range-aggregation": "Has Range Intervals",
       "range-aggregation-help": "Numerical criterion with terms as range intervals.",
       "error": {
-        "duplicate-criterion-alias": "This field is already associated with a criterion. Only a numerical field can have two criteria, a discrete and a range criterion."
+        "duplicate-criterion-alias": "This field is already associated with a criterion. Only numerical criteria (discrete and range) and subset criteria can be associate to a common field."
       }
     },
     "term-dialog": {

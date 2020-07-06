@@ -47,6 +47,8 @@ mica.entitySfConfig
         $scope.model.children = content.terms ? content.terms : [];
         $scope.model.type = 'criterion';
         $scope.model.aliases = VocabularyAttributeService.getAliases($scope.taxonomy.vocabularies, content);
+        $scope.model.updateAliases = (isSubset) =>
+          $scope.model.aliases = VocabularyAttributeService.getAliases($scope.taxonomy.vocabularies, isSubset ? content : null);
       };
 
       var navigateToTaxonomy = function() {
@@ -390,6 +392,10 @@ mica.entitySfConfig
           };
 
           $scope.model.onSubsetChange = function() {
+            if ($scope.model.content) {
+              $scope.model.updateAliases($scope.sfForm.model.subset);
+            }
+            
             if (!EntityTaxonomySchemaFormService.validateModel($scope.sfForm, $scope.model)) {
               $scope.$broadcast('schemaForm.error.field', 'duplicate-criterion-alias', false);
             } else {
