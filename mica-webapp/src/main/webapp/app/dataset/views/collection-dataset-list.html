@@ -35,6 +35,19 @@
       </span>
       </div>
       <div class="col-xs-8">
+        <div class="pull-right">
+          <pagination-size-selector
+            class="padding-right-5"
+            style="display: inline-block"
+            size="pagination.size"
+            on-selected="onPageSizeSelected(size)">
+          </pagination-size-selector>
+          <dir-pagination-controls
+            pagination-id="myPaginationList"
+            class="pull-right"
+            on-page-change="pageChanged(newPageNumber, oldPageNumber)">
+          </dir-pagination-controls>
+        </div>
         <dir-pagination-controls class="pull-right" on-page-change="pageChanged(newPageNumber, oldPageNumber)"></dir-pagination-controls>
       </div>
     </div>
@@ -52,7 +65,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr dir-paginate="dataset in documents | itemsPerPage: limit" total-items="totalCount" current-page="pagination.current">
+        <tr dir-paginate="dataset in documents | itemsPerPage: pagination.size" pagination-id="myPaginationList" total-items="totalCount" current-page="pagination.current">
           <td>
             <a ng-href="#/collected-dataset/{{dataset.id}}" translate>{{dataset.id}}</a>
           </td>
