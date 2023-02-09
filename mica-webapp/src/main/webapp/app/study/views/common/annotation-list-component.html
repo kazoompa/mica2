@@ -1,0 +1,11 @@
+<div>
+  <div ng-repeat="(tax, namespace) in $ctrl.attributesMap">
+    {{ namespace.title | localizedString }}
+    <div ng-repeat="(voc, name) in namespace.names">
+      {{ name.title | localizedString }}
+      <div ng-repeat="(term, value) in name.values">
+        {{ value.title | localizedString }}
+      </div>
+    </div>
+  </div>
+</div>

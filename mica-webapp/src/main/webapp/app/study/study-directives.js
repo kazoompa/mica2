@@ -143,4 +143,55 @@ mica.study
         reset();
       };
     }]
+  })
+  .component('annotationList', {
+    bindings: {
+      taxonomyNames: '<',
+      attributes: '<'
+    },
+    templateUrl: 'app/study/views/common/annotation-list-component.html',
+    controllerAs: '$ctrl',
+    controller: ['TaxonomyFilterResource', class toto {
+      constructor(TaxonomyFilterResource) {
+        this.TaxonomyFilterResource = TaxonomyFilterResource;
+        this.attributesMap = {};
+      }
+
+      __
+
+      $onChanges() {
+        if (this.attributes && this.taxonomyNames) {
+          this.TaxonomyFilterResource.query().$promise
+            .then(response => {
+              this.taxonomies = (response || [])
+                .filter(r => this.taxonomyNames.indexOf(r.name) > -1)
+                .reduce((acc, tax) => {
+                  acc[tax.name] = tax;
+                  return acc;
+                }, {});
+
+              this.attributesMap = this.attributes.reduce((acc, att) => {
+                const taxonomy = this.taxonomies[att.namespace];
+                let namespaceMap = acc[att.namespace]
+                if (!namespaceMap) {
+                  namespaceMap = acc[att.namespace] = {title: taxonomy.title, names: {}}
+                }
+                const vocabulary = taxonomy.vocabularies.filter(vocabulary => vocabulary.name === att.name).pop();
+                const terms = vocabulary.terms;
+                let nameMap = namespaceMap.names[att.name]
+                if (!nameMap) {
+                  nameMap = namespaceMap.names[att.name] = {title: vocabulary.title, values: []}
+                }
+                nameMap.values = nameMap.values.concat(terms.filter(term => term.name === (att.values || [{value:''}])[0].value))
+
+                return acc;
+              }, {});
+
+              console.log('>>>', this.attributesMap);
+
+            });
+
+        }
+      }
+    }]
   });
