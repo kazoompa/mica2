@@ -28,12 +28,16 @@ import org.obiba.mica.file.service.TempFileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
+@Component
+@Scope("request")
 @Path("/files/temp")
 @RequiresPermissions({"/files:UPLOAD"})
 public class TempFilesResource {
